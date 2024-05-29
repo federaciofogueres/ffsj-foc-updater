@@ -1,0 +1,12 @@
+.full-width {
+  width: 100%;
+}
+
+a:link {
+  text-decoration:none;
+}
+
+.text-area-full-width {
+  height: 60px;
+  width: 100%;
+}

@@ -1,0 +1,8 @@
+{
+  "url_base_local": "https://api-foguerapp-3.azurewebsites.net/public",
+  "url_base": "https://api-foguerapp-3.azurewebsites.net/public",
+  "candidatas_path": "/belleses/",
+  "representantes_path": "/representantes",
+  "adultas_path": "/adultas",
+  "infantiles_path": "/infantiles"
+}
