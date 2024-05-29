@@ -1,12 +1,10 @@
 import { Component } from '@angular/core';
-import { MatTableModule } from '@angular/material/table';
-import * as XLSX from 'xlsx';
 
 
 @Component({
   selector: 'app-foguerapp',
   standalone: true,
-  imports: [MatTableModule],
+  imports: [],
   templateUrl: './foguerapp.component.html',
   styleUrl: './foguerapp.component.scss'
 })
