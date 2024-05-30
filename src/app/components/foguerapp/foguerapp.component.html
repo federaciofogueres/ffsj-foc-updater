@@ -6,26 +6,37 @@
   @if (mostrarFiltros) {
     <input [(ngModel)]="filtro" placeholder="Buscar cabecera">
     @for (cabecera of nuevasCabeceras; track cabecera; let i = $index) {
-      <!-- @if (cabeceras.includes(filtro)) {
-        <input type="checkbox" [checked]="esDesactivada(cabecera)" (change)="desactivarCabecera(cabecera)"> {{cabecera}}
-      } -->
       <input type="checkbox" [checked]="cabecera.active" (change)="changeStateCabecera(cabecera)"> {{cabecera.label}}
     }
   }
   <hr>
-  <div class="table-container w-100">
-    <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
-        @for (column of nuevasCabeceras; track column; let i = $index) {
-          @if (column.active) {
-            <ng-container [matColumnDef]="column.label">
-              <th mat-header-cell *matHeaderCellDef> {{column.label}} </th>
-              <td mat-cell *matCellDef="let element"> {{element[i]}} </td>
-            </ng-container>
+  <div class="table-container w-100 h-100">
+    @if (!Boolean(dataSource) || dataSource.data.length === 0) { 
+      <div class="archivos-sin-cargar d-flex flex-column justify-content-center align-items-center">
+        <i class="bi bi-ban" style="font-size: 5rem;"></i>
+        <span class="h2 mt-3">No hay datos cargados. Carga un archivo.</span>
+      </div>
+    } @else {
+      <mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+        
+          @for (column of nuevasCabeceras; track column; let i = $index) {
+            @if (column.active) {
+              <ng-container [matColumnDef]="column.label">
+                <mat-header-cell *matHeaderCellDef> {{column.label}} </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                  @if (element[i].length > 100) {
+                    {{element[i].slice(0,97)}}... 
+                  } @else {
+                    {{element[i]}}
+                  }
+                </mat-cell>
+              </ng-container>
+            }
           }
-        }
-      <tr mat-header-row *matHeaderRowDef="activeColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: activeColumns;"></tr>
-    </table>
+        <mat-header-row *matHeaderRowDef="activeColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: activeColumns;"></mat-row>
+      </mat-table>
+    }
     <mat-paginator [pageSizeOptions]="[5, 10, 20]"
         showFirstLastButtons
         aria-label="Select page of periodic elements">

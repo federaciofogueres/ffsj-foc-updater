@@ -1,0 +1,16 @@
+.table-container{
+    background-color: burlywood;
+}
+
+mat-table {
+    width: 100%;
+    height: calc(100vh - 220px);
+    overflow: auto;
+}
+
+
+.archivos-sin-cargar{
+    background-color: grey;
+    width: 100%;
+    height: calc(100vh - 220px);
+}

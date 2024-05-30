@@ -26,6 +26,7 @@ export interface Cabecera {
 })
 export class FoguerappComponent {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
+  Boolean = Boolean;
   displayedColumns: string[] = [];
   data: any[] = [];
   dataSource!: MatTableDataSource<any>;
