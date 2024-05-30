@@ -1,14 +1,28 @@
-<input type="file" (change)="onFileChange($event)" multiple="false" />
 
-<div class="container-fluid">
-  <span class="h2">Datos subidos</span>
-  <button (click)="mostrarFiltros = !mostrarFiltros">Filtros</button>
-  @if (mostrarFiltros) {
-    <input [(ngModel)]="filtro" placeholder="Buscar cabecera">
-    @for (cabecera of nuevasCabeceras; track cabecera; let i = $index) {
-      <input type="checkbox" [checked]="cabecera.active" (change)="changeStateCabecera(cabecera)"> {{cabecera.label}}
-    }
-  }
+<div class="container-fluid mt-3">
+  <div class="d-flex justify-content-between">
+    <span class="h2">Datos subidos</span>
+
+    <div class="buttons d-flex">
+      <input #fileInput style="display: none" type="file" (change)="onFileChange($event)" multiple="false" />
+      <button class="btn btn-primary me-3" (click)="fileInput.click()">Cargar archivo</button>
+ 
+      
+      @if(archivoSubido) {
+        <button mat-icon-button class="btn btn-primary align-items-center d-flex" [matMenuTriggerFor]="filterMenu">
+          <mat-icon>filter_list</mat-icon>
+          <span>Filtros</span>
+        </button>
+        <mat-menu #filterMenu="matMenu">
+          @for(cabecera of cabecerasFiltradas; track cabecera; let i = $index){
+            <button mat-menu-item (click)="$event.stopPropagation()">
+              <mat-checkbox [checked]="cabecera.active" (click)="changeStateCabecera(cabecera)">{{cabecera.label}}</mat-checkbox>
+            </button>
+          }
+        </mat-menu>
+      }
+    </div>
+  </div>
   <hr>
   <div class="table-container w-100 h-100">
     @if (!Boolean(dataSource) || dataSource.data.length === 0) { 

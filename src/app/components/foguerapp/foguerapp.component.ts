@@ -1,7 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { MatSelect, MatSelectModule } from '@angular/material/select';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import * as XLSX from 'xlsx';
 
@@ -18,6 +23,11 @@ export interface Cabecera {
   imports: [ 
     MatTableModule,
     MatPaginatorModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    MatCheckboxModule,
+    MatMenuModule,
+    MatIconModule,
     FormsModule,
     CommonModule
   ],
@@ -36,11 +46,35 @@ export class FoguerappComponent {
   desactivadas: string[] = [];
 
   nuevasCabeceras: Cabecera[] = [];
+  cabecerasFiltradas: Cabecera[] = [];
 
   filtro: string = '';
   mostrarFiltros: boolean = false;
 
+  archivoSubido: boolean = false;
+
+  @ViewChild('select') select!: MatSelect;
+
+  preventClose(event: KeyboardEvent) {
+    if (this.select.panelOpen) {
+      event.stopPropagation();
+    }
+  }
+
   constructor() { }
+
+  changeStateFiltros() {
+    this.mostrarFiltros = !this.mostrarFiltros;
+  }
+
+  onFiltroChange(filtro: any) {
+    console.log(filtro);
+    
+    // Filtra las 'nuevasCabeceras' para incluir sólo aquellas que contienen el texto del filtro
+    this.cabecerasFiltradas = this.nuevasCabeceras.filter(cabecera => cabecera.label.includes(filtro.target.value));
+    console.log(this.cabecerasFiltradas);
+    
+  }
 
   changeStateCabecera(cabecera: Cabecera) {
     if (cabecera) {
@@ -109,6 +143,8 @@ export class FoguerappComponent {
       if (this.dataSource) {
         this.dataSource.paginator = this.paginator;
       }
+      this.cabecerasFiltradas = this.nuevasCabeceras;
+      this.archivoSubido = true;
     };
     reader.readAsBinaryString(target.files[0]);
   }
