@@ -110,16 +110,15 @@ export class FoguerappComponent {
       const ws: XLSX.WorkSheet = wb.Sheets[wsname];
   
       this.data = XLSX.utils.sheet_to_json(ws, { header: 1 });
-      this.dataSource = new MatTableDataSource(this.data);
-
+  
       let worksheet = wb.Sheets[wb.SheetNames[0]];
   
       // Almacenar el primer dato de cada columna como cabecera
       this.activeColumns = this.data[0];
-
+  
       // Leer las cabeceras del archivo Excel
       let excelHeaders:any = XLSX.utils.sheet_to_json(worksheet, { header: 1 })[0];
-
+  
       excelHeaders.map((header: any, index: any) => {
         this.nuevasCabeceras.push( {
           label: header,
@@ -136,17 +135,26 @@ export class FoguerappComponent {
           active: true,
           type: 'checkbox'
         });
-
-        for (let i = 0; i < this.data.length; i++) {
-          if (i === 0) {
-            this.data[i].push(campo);
-          } else {
-            this.data[i].push(false);
-          }
+  
+        this.data[0].push(campo);
+        for (let i = 1; i < this.data.length; i++) {
+          this.data[i].push(false);
         }
       }
-      this.data.shift();
       this.nuevasCabeceras.sort((a, b) => a.order - b.order);
+  
+      // Reordenar los datos en el mismo orden que nuevasCabeceras
+      this.data = this.data.map(row => {
+        let newRow: any = [];
+        this.nuevasCabeceras.forEach(header => {
+          newRow.push(row[this.activeColumns.indexOf(header.label)]);
+        });
+        return newRow;
+      });
+  
+      this.dataSource = new MatTableDataSource(this.data);
+  
+      this.data.shift();
       this.displayedColumns = this.nuevasCabeceras.filter(cabecera => cabecera.active).map(cabecera => cabecera.label);
       console.log(this.displayedColumns);
       this.activeColumns = this.displayedColumns;
