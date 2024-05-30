@@ -10,7 +10,6 @@ import { MatSelect, MatSelectModule } from '@angular/material/select';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import * as XLSX from 'xlsx';
 
-
 export interface Cabecera {
   label: string;
   order: number;
@@ -43,27 +42,10 @@ export class FoguerappComponent {
   dataSource!: MatTableDataSource<any>;
 
   activeColumns: string[] = [];
-  desactivadas: string[] = [];
-
   nuevasCabeceras: Cabecera[] = [];
-
-  filtro: string = '';
-  mostrarFiltros: boolean = false;
-
   archivoSubido: boolean = false;
-
   showInput = false;
   camposAgregados: string[] = [];
-
-  @ViewChild('select') select!: MatSelect;
-
-  preventClose(event: KeyboardEvent) {
-    if (this.select.panelOpen) {
-      event.stopPropagation();
-    }
-  }
-
-  constructor() { }
 
   addCampo(value: string) {
     this.camposAgregados.push(value);
@@ -81,12 +63,10 @@ export class FoguerappComponent {
       }
     }
     console.log(this.nuevasCabeceras);
-    
   }
 
   reiniciaDatos() {
     this.data = [];
-    this.desactivadas = [];
     if (this.dataSource) {
       this.dataSource.paginator = this.paginator;
       this.dataSource.data = [];
@@ -103,66 +83,68 @@ export class FoguerappComponent {
   
     reader.onload = (e: any) => {
       const bstr: string = e.target.result;
-  
       const wb: XLSX.WorkBook = XLSX.read(bstr, { type: 'binary' });
-  
       const wsname: string = wb.SheetNames[0];
       const ws: XLSX.WorkSheet = wb.Sheets[wsname];
-  
       this.data = XLSX.utils.sheet_to_json(ws, { header: 1 });
   
-      let worksheet = wb.Sheets[wb.SheetNames[0]];
-  
-      // Almacenar el primer dato de cada columna como cabecera
-      this.activeColumns = this.data[0];
-  
-      // Leer las cabeceras del archivo Excel
-      let excelHeaders:any = XLSX.utils.sheet_to_json(worksheet, { header: 1 })[0];
-  
-      excelHeaders.map((header: any, index: any) => {
-        this.nuevasCabeceras.push( {
-          label: header,
-          order: index,
-          active: true,
-          type: 'text'
-        });
-      });
-      
-      for (let campo of this.camposAgregados) {
-        this.nuevasCabeceras.push({
-          label: campo,
-          order: this.nuevasCabeceras[0].order - 1,
-          active: true,
-          type: 'checkbox'
-        });
-  
-        this.data[0].push(campo);
-        for (let i = 1; i < this.data.length; i++) {
-          this.data[i].push(false);
-        }
-      }
-      this.nuevasCabeceras.sort((a, b) => a.order - b.order);
-  
-      // Reordenar los datos en el mismo orden que nuevasCabeceras
-      this.data = this.data.map(row => {
-        let newRow: any = [];
-        this.nuevasCabeceras.forEach(header => {
-          newRow.push(row[this.activeColumns.indexOf(header.label)]);
-        });
-        return newRow;
-      });
-  
-      this.dataSource = new MatTableDataSource(this.data);
-  
-      this.data.shift();
-      this.displayedColumns = this.nuevasCabeceras.filter(cabecera => cabecera.active).map(cabecera => cabecera.label);
-      console.log(this.displayedColumns);
-      this.activeColumns = this.displayedColumns;
-      if (this.dataSource) {
-        this.dataSource.paginator = this.paginator;
-      }
-      this.archivoSubido = true;
+      this.processExcelHeaders(wb);
+      this.addAdditionalFields();
+      this.sortDataAndHeaders();
+      this.initializeDataSource();
     };
     reader.readAsBinaryString(target.files[0]);
+  }
+  
+  processExcelHeaders(wb: XLSX.WorkBook) {
+    let worksheet = wb.Sheets[wb.SheetNames[0]];
+    let excelHeaders:any = XLSX.utils.sheet_to_json(worksheet, { header: 1 })[0];
+    excelHeaders.map((header: any, index: any) => {
+      this.nuevasCabeceras.push( {
+        label: header,
+        order: index,
+        active: true,
+        type: 'text'
+      });
+    });
+  }
+  
+  addAdditionalFields() {
+    for (let campo of this.camposAgregados) {
+      this.nuevasCabeceras.push({
+        label: campo,
+        order: this.nuevasCabeceras[0].order - 1,
+        active: true,
+        type: 'checkbox'
+      });
+  
+      this.data[0].push(campo);
+      for (let i = 1; i < this.data.length; i++) {
+        this.data[i].push(false);
+      }
+    }
+    this.nuevasCabeceras.sort((a, b) => a.order - b.order);
+  }
+
+  sortDataAndHeaders() {
+    this.displayedColumns = this.nuevasCabeceras.filter(cabecera => cabecera.active).map(cabecera => cabecera.label);
+    this.activeColumns = this.displayedColumns;
+    this.data = this.data.map(row => {
+      let newRow: any = [];
+      this.nuevasCabeceras.forEach(header => {
+        newRow.push(row[this.data[0].indexOf(header.label)]);
+      });
+      return newRow;
+    });
+  }
+  
+  initializeDataSource() {
+    this.dataSource = new MatTableDataSource(this.data);
+    this.data.shift();
+    console.log(this.displayedColumns);
+    if (this.dataSource) {
+      this.dataSource.paginator = this.paginator;
+    }
+    this.archivoSubido = true;
   }
 }
