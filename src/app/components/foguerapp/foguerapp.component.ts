@@ -1,8 +1,9 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
-import * as XLSX from 'xlsx';
-import { MatTableModule } from '@angular/material/table';
-import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatTableModule } from '@angular/material/table';
+import * as XLSX from 'xlsx';
 
 
 export interface Cabecera {
@@ -16,6 +17,7 @@ export interface Cabecera {
   standalone: true,
   imports: [ 
     MatTableModule,
+    MatPaginatorModule,
     FormsModule,
     CommonModule
   ],
@@ -35,37 +37,9 @@ export class FoguerappComponent {
   filtro: string = '';
   mostrarFiltros: boolean = false;
 
-  constructor(
-    private cdr: ChangeDetectorRef
-  ) { }
+  constructor() { }
 
   changeStateCabecera(cabecera: Cabecera) {
-    // if (this.activeColumns.includes(cabecera)) {
-    //   this.activeColumns = this.activeColumns.filter((column) => column !== cabecera);
-    //   this.desactivadas.push(cabecera);
-    // } else {
-    //   this.desactivadas = this.desactivadas.filter((column) => column !== cabecera);
-    //   this.activeColumns.push(cabecera);
-    // }
-    // this.cdr.detectChanges();
-    // console.log(this.desactivadas);
-    // console.log(this.activeColumns);
-
-    // Encuentra la cabecera en el array nuevasCabeceras
-    // let cabeceraObj = this.nuevasCabeceras.find(c => c.label === cabecera);
-
-    // Si la cabecera existe, cambia su estado 'active'
-    // if (cabeceraObj) {
-    //   if (cabeceraObj.active) {
-    //     cabeceraObj.active = false;
-    //     this.activeColumns = this.activeColumns.filter((column) => column !== cabecera);
-    //   } else {
-    //     cabeceraObj.active = true;
-    //     this.activeColumns.push(cabecera);
-    //   }
-    // }
-
-    
     if (cabecera) {
       if (cabecera.active) {
         cabecera.active = false;
@@ -78,10 +52,6 @@ export class FoguerappComponent {
     }
     console.log(this.nuevasCabeceras);
     
-  }
-
-  esDesactivada(cabecera: string) {
-    return this.desactivadas.includes(cabecera);
   }
 
   reiniciaDatos() {
@@ -132,23 +102,5 @@ export class FoguerappComponent {
 
     };
     reader.readAsBinaryString(target.files[0]);
-
   }
-
-    // let workBook: any = null;
-    // let jsonData: any = null;
-    // const reader = new FileReader();
-    // const file = event.target.files[0];
-    // reader.onload = (event) => {
-    //   const data = reader.result;
-    //   workBook = XLSX.read(data, { type: 'binary' });
-    //   jsonData = workBook.SheetNames.reduce((initial, name) => {
-    //     const sheet = workBook.Sheets[name];
-    //     initial[name] = XLSX.utils.sheet_to_json(sheet);
-    //     return initial;
-    //   }, {});
-    //   this.cabeceras = Object.keys(jsonData[workBook.SheetNames[0]][0]);
-    // }
-    // reader.readAsBinaryString(file);
-  // }
 }
