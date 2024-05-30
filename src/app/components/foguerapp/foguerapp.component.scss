@@ -12,5 +12,11 @@ mat-table {
 .archivos-sin-cargar{
     background-color: grey;
     width: 100%;
-    height: calc(100vh - 220px);
+    height: calc(100vh - 270px);
+}
+
+
+.drop-btn {
+    border: none;
+    background: none;
 }

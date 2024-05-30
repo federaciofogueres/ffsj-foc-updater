@@ -1,40 +1,54 @@
 
 <div class="container-fluid mt-3">
-  <div class="d-flex justify-content-between">
-    <span class="h2">Datos subidos</span>
-
-    <div class="buttons d-flex">
-      <input #fileInput style="display: none" type="file" (change)="onFileChange($event)" multiple="false" />
-      <button class="btn btn-primary me-3" (click)="fileInput.click()">Cargar archivo</button>
-      <button class="btn btn-primary me-3" (click)="showInput = !showInput">Añadir campo</button>
-      @if (showInput) {
-        <div class="d-flex">
-          <input #campoInput type="text" class="form-control me-3">
-          <button class="btn btn-primary" (click)="addCampo(campoInput.value); campoInput.value=''">+</button>
-        </div>
-      }
-      
-      @if(archivoSubido) {
-        <button mat-icon-button class="btn btn-primary align-items-center d-flex" [matMenuTriggerFor]="filterMenu">
-          <mat-icon>filter_list</mat-icon>
-          <span>Filtros</span>
+  <div class="d-flex flex-column flex-lg-row justify-content-between">
+    <div class="d-flex justify-content-between align-items-center">
+      <span class="h2">Datos subidos</span>
+      <div class="dropdown">
+        <button class="drop-btn" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bi bi-gear-fill" style="font-size: 1rem;">
+                <span style="font-style: normal;">
+                    Opciones
+                </span>
+            </i>
         </button>
-        <mat-menu #filterMenu="matMenu">
-          @for(cabecera of nuevasCabeceras; track cabecera; let i = $index){
-            <button mat-menu-item (click)="$event.stopPropagation()">
-              <mat-checkbox [checked]="cabecera.active" (click)="changeStateCabecera(cabecera)">{{cabecera.label}}</mat-checkbox>
-            </button>
-          }
-        </mat-menu>
-      }
+        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+            <li><a class="dropdown-item" (click)="downloadExcelTemplate()"><i class="bi bi-filetype-xlsx me-2"></i>Descargar plantilla</a></li>
+            <li><a class="dropdown-item" (click)="fileInput.click()"><i class="bi bi-cloud-arrow-up-fill me-2"></i>Subir Excel</a></li>
+            <li><a class="dropdown-item" (click)="showInput = !showInput"><i class="bi bi-qr-code-scan me-2"></i>Añadir campo</a></li>
+            @if(archivoSubido) {
+              <li>
+                <a class="dropdown-item" [matMenuTriggerFor]="filterMenu" (click)="$event.stopPropagation()">
+                  <i class="bi bi-list me-2"></i>Filtros
+                  <mat-menu #filterMenu="matMenu">
+                    @for(cabecera of nuevasCabeceras; track cabecera; let i = $index){
+                      <button mat-menu-item (click)="$event.stopPropagation()">
+                        <mat-checkbox [checked]="cabecera.active" (click)="changeStateCabecera(cabecera)">{{cabecera.label}}</mat-checkbox>
+                      </button>
+                    }
+                  </mat-menu>
+                </a>
+              </li>
+            }
+        </ul>
+      </div>
+      <input #fileInput style="display: none" type="file" (change)="onFileChange($event)" multiple="false" />
     </div>
+    @if (showInput) {
+      <div class="d-flex justify-content-end">
+        <input #campoInput type="text" class="form-control me-3">
+        <button class="btn btn-primary" (click)="addCampo(campoInput.value); campoInput.value=''">
+          <i class="bi bi-check"></i>
+        </button>
+      </div>
+    }
   </div>
   <hr>
   <div class="table-container w-100 h-100">
     @if (!Boolean(dataSource) || dataSource.data.length === 0) { 
-      <div class="archivos-sin-cargar d-flex flex-column justify-content-center align-items-center">
+      <div class="archivos-sin-cargar p-3 text-center d-flex flex-column justify-content-center align-items-center">
+        <span class="h2 mb-3">No hay datos cargados.</span>
         <i class="bi bi-ban" style="font-size: 5rem;"></i>
-        <span class="h2 mt-3">No hay datos cargados. Carga un archivo.</span>
+        <span class="h2 mt-3">Carga un archivo.</span>
       </div>
     } @else {
       <mat-table [dataSource]="dataSource" class="mat-elevation-z8">

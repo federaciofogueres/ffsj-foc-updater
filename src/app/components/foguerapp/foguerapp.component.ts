@@ -147,4 +147,9 @@ export class FoguerappComponent {
     }
     this.archivoSubido = true;
   }
+
+  downloadExcelTemplate() {
+    console.log('Downloading template xls');
+    
+  }
 }
