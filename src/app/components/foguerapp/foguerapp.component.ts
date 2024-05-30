@@ -15,6 +15,7 @@ export interface Cabecera {
   label: string;
   order: number;
   active: boolean;
+  type: string;
 }
 
 @Component({
@@ -41,17 +42,18 @@ export class FoguerappComponent {
   data: any[] = [];
   dataSource!: MatTableDataSource<any>;
 
-  cabeceras: string[] = []; // Añade tus cabeceras aquí
   activeColumns: string[] = [];
   desactivadas: string[] = [];
 
   nuevasCabeceras: Cabecera[] = [];
-  cabecerasFiltradas: Cabecera[] = [];
 
   filtro: string = '';
   mostrarFiltros: boolean = false;
 
   archivoSubido: boolean = false;
+
+  showInput = false;
+  camposAgregados: string[] = [];
 
   @ViewChild('select') select!: MatSelect;
 
@@ -63,17 +65,8 @@ export class FoguerappComponent {
 
   constructor() { }
 
-  changeStateFiltros() {
-    this.mostrarFiltros = !this.mostrarFiltros;
-  }
-
-  onFiltroChange(filtro: any) {
-    console.log(filtro);
-    
-    // Filtra las 'nuevasCabeceras' para incluir sólo aquellas que contienen el texto del filtro
-    this.cabecerasFiltradas = this.nuevasCabeceras.filter(cabecera => cabecera.label.includes(filtro.target.value));
-    console.log(this.cabecerasFiltradas);
-    
+  addCampo(value: string) {
+    this.camposAgregados.push(value);
   }
 
   changeStateCabecera(cabecera: Cabecera) {
@@ -93,7 +86,6 @@ export class FoguerappComponent {
 
   reiniciaDatos() {
     this.data = [];
-    this.cabeceras = [];
     this.desactivadas = [];
     if (this.dataSource) {
       this.dataSource.paginator = this.paginator;
@@ -123,27 +115,44 @@ export class FoguerappComponent {
       let worksheet = wb.Sheets[wb.SheetNames[0]];
   
       // Almacenar el primer dato de cada columna como cabecera
-      this.cabeceras = this.data[0];
       this.activeColumns = this.data[0];
 
       // Leer las cabeceras del archivo Excel
       let excelHeaders:any = XLSX.utils.sheet_to_json(worksheet, { header: 1 })[0];
 
-      // Almacenar las cabeceras en el array nuevasCabeceras
-      this.nuevasCabeceras = excelHeaders.map((header: any, index: any) => {
-        return {
+      excelHeaders.map((header: any, index: any) => {
+        this.nuevasCabeceras.push( {
           label: header,
           order: index,
-          active: true
-        };
+          active: true,
+          type: 'text'
+        });
       });
-  
-      this.displayedColumns = this.data.shift();
+      
+      for (let campo of this.camposAgregados) {
+        this.nuevasCabeceras.push({
+          label: campo,
+          order: this.nuevasCabeceras[0].order - 1,
+          active: true,
+          type: 'checkbox'
+        });
+
+        for (let i = 0; i < this.data.length; i++) {
+          if (i === 0) {
+            this.data[i].push(campo);
+          } else {
+            this.data[i].push(false);
+          }
+        }
+      }
+      this.data.shift();
+      this.nuevasCabeceras.sort((a, b) => a.order - b.order);
+      this.displayedColumns = this.nuevasCabeceras.filter(cabecera => cabecera.active).map(cabecera => cabecera.label);
       console.log(this.displayedColumns);
+      this.activeColumns = this.displayedColumns;
       if (this.dataSource) {
         this.dataSource.paginator = this.paginator;
       }
-      this.cabecerasFiltradas = this.nuevasCabeceras;
       this.archivoSubido = true;
     };
     reader.readAsBinaryString(target.files[0]);

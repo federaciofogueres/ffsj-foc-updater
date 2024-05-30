@@ -6,7 +6,13 @@
     <div class="buttons d-flex">
       <input #fileInput style="display: none" type="file" (change)="onFileChange($event)" multiple="false" />
       <button class="btn btn-primary me-3" (click)="fileInput.click()">Cargar archivo</button>
- 
+      <button class="btn btn-primary me-3" (click)="showInput = !showInput">Añadir campo</button>
+      @if (showInput) {
+        <div class="d-flex">
+          <input #campoInput type="text" class="form-control me-3">
+          <button class="btn btn-primary" (click)="addCampo(campoInput.value); campoInput.value=''">+</button>
+        </div>
+      }
       
       @if(archivoSubido) {
         <button mat-icon-button class="btn btn-primary align-items-center d-flex" [matMenuTriggerFor]="filterMenu">
@@ -14,7 +20,7 @@
           <span>Filtros</span>
         </button>
         <mat-menu #filterMenu="matMenu">
-          @for(cabecera of cabecerasFiltradas; track cabecera; let i = $index){
+          @for(cabecera of nuevasCabeceras; track cabecera; let i = $index){
             <button mat-menu-item (click)="$event.stopPropagation()">
               <mat-checkbox [checked]="cabecera.active" (click)="changeStateCabecera(cabecera)">{{cabecera.label}}</mat-checkbox>
             </button>
@@ -38,10 +44,14 @@
               <ng-container [matColumnDef]="column.label">
                 <mat-header-cell *matHeaderCellDef> {{column.label}} </mat-header-cell>
                 <mat-cell *matCellDef="let element">
-                  @if (element[i].length > 100) {
-                    {{element[i].slice(0,97)}}... 
+                  @if (column.type === 'checkbox') {
+                    <mat-checkbox [checked]="element[i]" (change)="element[i] = !element[i]"></mat-checkbox>
                   } @else {
-                    {{element[i]}}
+                    @if (element[i]?.length > 100) {
+                      {{element[i].slice(0,97)}}... 
+                    } @else {
+                      {{element[i]}}
+                    }
                   }
                 </mat-cell>
               </ng-container>
