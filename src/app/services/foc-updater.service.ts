@@ -1,9 +1,8 @@
+import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Injectable } from '@angular/core';
-import { InformacionService } from './informacion.service';
-import { HttpClient, HttpHeaders, HttpRequest } from "@angular/common/http";
-import { Info } from '../model/info.model';
-import { Candidata } from '../model/candidata.model';
 import { CandidatasResponse } from '../interfaces/CandidatasResponse.interface';
+import { Candidata } from '../model/candidata.model';
+import { InformacionService } from './informacion.service';
 
 @Injectable({
   providedIn: 'root'
@@ -47,10 +46,23 @@ export class FocUpdaterService {
     });
   }
 
+  public getInfoAsociaciones() {
+    this._is.getInfo().then((info) => {
+      console.log(info.url_base + info.candidatas_path);
+      console.log('https://api-admin-foguerapp.azurewebsites.net/fogueres');
+      
+      this.http.get<any>('https://api-admin-foguerapp.azurewebsites.net/fogueres')
+        .subscribe((fogueres: any) => {
+          console.log(fogueres);
+          
+        });
+    });
+  }
+
   public setRepresenantesAdultas(bellezas: Candidata[]): Promise<string> {
     const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
 
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       this._is.getInfo().then((info) => {
         console.log('Enviando Adultas: ', info.url_base + info.representantes_path + info.adultas_path);
         this.http.post(info.url_base + info.representantes_path + info.adultas_path, JSON.stringify(bellezas), { headers: headers })
@@ -64,7 +76,7 @@ export class FocUpdaterService {
   public setRepresenantesInfantiles(bellezas: Candidata[]): Promise<string> {
     const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
 
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       this._is.getInfo().then((info) => {
         console.log('hola ->', info);
         
