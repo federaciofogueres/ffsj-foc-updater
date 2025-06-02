@@ -3,43 +3,46 @@
   <form class="example-form">
     <mat-form-field class="example-full-width" style="width: 100vw;">
       <mat-label>Candidatas</mat-label>
-      <input type="text"
-             placeholder="Pick one"
-             aria-label="Number"
-             matInput
-             [formControl]="candisCtrl"
-             [matAutocomplete]="auto">
+      <input type="text" placeholder="Pick one" aria-label="Number" matInput [formControl]="candisCtrl"
+        [matAutocomplete]="auto">
       <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
         @for (option of candisShow; track $index) {
-          <mat-option [value]="option" (onSelectionChange)="selectedItemChange($event, option)">{{option.nombre}} - {{option.hoguera}}</mat-option>
+        <mat-option [value]="option" (onSelectionChange)="selectedItemChange($event, option)">{{option.nombre}} -
+          {{option.hoguera}}</mat-option>
         }
       </mat-autocomplete>
     </mat-form-field>
   </form>
   <mat-list>
     @for (candidata of candisSeleccionadas; track $index) {
-      <ng-container>
-        <mat-list-item>    
-          <div style="display: flex;">
-            <mat-checkbox [checked]="candidata.id == idBelleza" [(ngModel)]="candidata.belleza" (change)="idBelleza = candidata.belleza ? candidata.id : -1"
-            name="{{candidata.id}}"></mat-checkbox>
-            <p mat-line>
-              <img style="vertical-align:middle;" aria-hidden src="{{candidata.src}}" height="30" />
-              <span>{{ candidata.nombre }}</span> -
-              <small>{{candidata.hoguera}}</small>
+    <ng-container>
+      <mat-list-item>
+        <div class="candidata-container">
+          <mat-checkbox [checked]="candidata.id == idBelleza" [(ngModel)]="candidata.belleza"
+            (change)="idBelleza = candidata.belleza ? candidata.id : -1" name="{{candidata.id}}">
+          </mat-checkbox>
+          <div class="candidata-info">
+            <div class="d-flex">
+              <img class="candidata-img" aria-hidden src="{{candidata.src}}" />
+              <div class="d-flex flex-column">
+                <span>{{ candidata.nombre }}</span>
+                <small>{{candidata.hoguera}}</small>
+              </div>
               <span [hidden]="candidata.id != idBelleza"> (Bellesa del Foc)</span>
-            </p>
-            <button mat-icon-button>
-              <mat-icon class="mat-24" (click)="itemsSelectedRemove(candidata)">clear</mat-icon>
-            </button>
-          </div>      
-        </mat-list-item>
-      </ng-container>
+            </div>
+          </div>
+          <button mat-icon-button>
+            <mat-icon class="mat-24" (click)="itemsSelectedRemove(candidata)">clear</mat-icon>
+          </button>
+        </div>
+      </mat-list-item>
+    </ng-container>
     }
   </mat-list>
 
   <div class="boton">
-    <button mat-raised-button color="primary" [disabled]="checkNumSeleccionadas()" (click)="setRepresentantes()">Enviar</button>
+    <button mat-raised-button color="primary" [disabled]="checkNumSeleccionadas()"
+      (click)="setRepresentantes()">Enviar</button>
     <div style="height:40px"></div>
     <div class="alert alert-danger" role="alert" [hidden]="!errores">{{ errores }}</div>
   </div>

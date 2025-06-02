@@ -43,23 +43,23 @@
 //       this.errores = "Ya están las 7 elegidas en la lista, no puedes añadir más.";
 //     }
 //   }
-  
+
 // }
 
 
-import {Component, OnInit} from '@angular/core';
-import {FormControl, FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {Observable} from 'rxjs';
-import {map, startWith} from 'rxjs/operators';
-import {AsyncPipe} from '@angular/common';
-import {MatAutocompleteModule} from '@angular/material/autocomplete';
-import {MatInputModule} from '@angular/material/input';
-import {MatFormFieldModule} from '@angular/material/form-field';
+import { AsyncPipe } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatListModule } from '@angular/material/list';
+import { Observable } from 'rxjs';
+import { map, startWith } from 'rxjs/operators';
 import { Candidata } from '../../model/candidata.model';
 import { FocUpdaterService } from '../../services/foc-updater.service';
-import { MatListModule } from '@angular/material/list';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatIconModule } from '@angular/material/icon';
 
 /**
  * @title Highlight the first autocomplete option
@@ -139,6 +139,10 @@ export class SeccionComponent implements OnInit {
         this.bellezasResult = "";
         this.bellezasResult = this.getBellezasString();
       });
+      // this._fs.setRepresenantesInfantiles(this.candisSeleccionadas).then((info) => {
+      //   this.bellezasResult = "";
+      //   this.bellezasResult = this.getBellezasString();
+      // });
     }
   }
 

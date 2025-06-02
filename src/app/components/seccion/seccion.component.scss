@@ -1,3 +1,33 @@
 mat-mdc-list-item-unscoped-content {
     display: flex;
 }
+
+/* Contenedor principal de cada candidata */
+.candidata-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    /* Permite que el contenido salte a la siguiente línea si no cabe */
+    gap: 10px;
+}
+
+/* Imagen de la candidata */
+.candidata-img {
+    vertical-align: middle;
+    height: 30px;
+    margin-right: 10px;
+}
+
+/* Contenedor de texto */
+.candidata-info {
+    flex: 1;
+    /* Permite que el texto ocupe el espacio disponible */
+    min-width: 0;
+    /* Evita que el texto desborde */
+}
+
+/* Botón de eliminar */
+button mat-icon {
+    color: #d32f2f;
+}
