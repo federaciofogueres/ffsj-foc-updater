@@ -46,16 +46,15 @@ export class FocUpdaterService {
     });
   }
 
-  public getInfoAsociaciones() {
-    this._is.getInfo().then((info) => {
-      console.log(info.url_base + info.candidatas_path);
-      console.log('https://api-admin-foguerapp.azurewebsites.net/fogueres');
-      
-      this.http.get<any>('https://api-admin-foguerapp.azurewebsites.net/fogueres')
-        .subscribe((fogueres: any) => {
-          console.log(fogueres);
-          
-        });
+  public getInfoAsociaciones(): Promise<any> {
+    return this._is.getInfo().then((info) => {
+      const token = localStorage.getItem('token') || '';
+      const headers = new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      });
+      const url = '/api/fogueres';
+      return this.http.get<any>(url, { headers }).toPromise();
     });
   }
 
@@ -79,7 +78,7 @@ export class FocUpdaterService {
     return new Promise((resolve) => {
       this._is.getInfo().then((info) => {
         console.log('hola ->', info);
-        
+
         console.log('Enviando Infantiles: ', info.url_base + info.representantes_path + info.infantiles_path);
         this.http.post(info.url_base + info.representantes_path + info.infantiles_path, JSON.stringify(bellezas), { headers: headers })
           .subscribe(res => {
@@ -88,4 +87,42 @@ export class FocUpdaterService {
       })
     });
   }
+
+  public updateAsociaciones(asociaciones: any[]): Promise<any[]> {
+    const token = localStorage.getItem('token') || '';
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    });
+    const url = '/api/fogueres/';
+
+    const asociacionesTransformadas = asociaciones.map((asociacion) => {
+      const transformed: any = {};
+      transformed.meta = {};
+
+      for (const key in asociacion) {
+        if (asociacion.hasOwnProperty(key)) {
+          if (key.startsWith('meta_')) {
+            const metaKey = key.replace('meta_', '');
+            if (key === 'meta_ejercicio') {
+              transformed.meta[metaKey] = String(asociacion[key]);
+            } else {
+              transformed.meta[metaKey] = asociacion[key];
+            }
+          } else {
+            transformed[key] = asociacion[key];
+          }
+        }
+      }
+
+      return transformed;
+    });
+
+    const peticiones = asociacionesTransformadas.map(asociacion =>
+      this.http.post(url + asociacion.id, JSON.stringify(asociacion), { headers: headers }).toPromise()
+    );
+
+    return Promise.all(peticiones);
+  }
+
 }
