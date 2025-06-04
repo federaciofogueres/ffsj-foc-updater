@@ -1,5 +1,6 @@
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Injectable } from '@angular/core';
+import { environment } from "../../environments/environment.prod";
 import { CandidatasResponse } from '../interfaces/CandidatasResponse.interface';
 import { Candidata } from '../model/candidata.model';
 import { InformacionService } from './informacion.service';
@@ -94,7 +95,7 @@ export class FocUpdaterService {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`
     });
-    const url = '/api/fogueres/';
+    const url = `${environment.apiUrl}/fogueres/`;
 
     const asociacionesTransformadas = asociaciones.map((asociacion) => {
       const transformed: any = {};
