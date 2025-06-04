@@ -104,7 +104,11 @@ export class FocUpdaterService {
         if (asociacion.hasOwnProperty(key)) {
           if (key.startsWith('meta_')) {
             const metaKey = key.replace('meta_', '');
-            transformed.meta[metaKey] = asociacion[key];
+            if (key === 'meta_ejercicio') {
+              transformed.meta[metaKey] = String(asociacion[key]);
+            } else {
+              transformed.meta[metaKey] = asociacion[key];
+            }
           } else {
             transformed[key] = asociacion[key];
           }

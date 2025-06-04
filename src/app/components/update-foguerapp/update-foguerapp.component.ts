@@ -79,7 +79,7 @@ export class UpdateFoguerappComponent {
       console.log('Array de objetos:', objetos);
 
       // Llamamos al servicio
-      this._focUpdaterService.updateAsociaciones([objetos[3]]);
+      this._focUpdaterService.updateAsociaciones(objetos);
     };
 
     reader.readAsBinaryString(target.files[0]);
